@@ -1,0 +1,18 @@
+{
+  "name": "lv-runner",
+  "version": "1.0.0",
+  "description": "Playwright-based lecture-video playback runner (personal study helper).",
+  "type": "module",
+  "scripts": {
+    "setup": "node src/setup.mjs",
+    "launch": "node src/launch.mjs",
+    "enumerate": "node src/enumerate.js",
+    "report": "node src/report.js",
+    "auto": "node src/auto.js"
+  },
+  "keywords": ["playwright", "automation", "cdp", "video"],
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.60.0"
+  }
+}

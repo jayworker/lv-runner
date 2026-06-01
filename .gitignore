@@ -1,0 +1,15 @@
+# 의존성
+node_modules/
+
+# 브라우저 프로필 (로그인 세션 — 절대 커밋 금지)
+.profile/
+.edge-profile/
+
+# 실행 상태/스크린샷/개인정보 (진도·과목 데이터)
+.state/
+screenshots/
+
+# 기타
+.env
+*.log
+.control

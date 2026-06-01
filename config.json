@@ -1,0 +1,10 @@
+{
+  "loginUrl": "https://ecampus.konkuk.ac.kr/ilos/main/main_form.acl",
+  "listUrlBase": "https://ecampus.konkuk.ac.kr/ilos/st/course/online_list_form.acl?WEEK_NO=",
+  "submainUrl": "https://ecampus.konkuk.ac.kr/ilos/st/course/submain_form.acl",
+  "debugPort": 9222,
+  "profileDir": ".edge-profile",
+  "maxWeek": 16,
+  "defaultSpeed": 1,
+  "_comment": "speed는 1 권장(사이트가 실제 경과시간 기준으로 집계). 대상 사이트 URL은 위에서 설정. weeks는 CLI 인자로 전달: 예) npm run auto -- 13,12,11"
+}

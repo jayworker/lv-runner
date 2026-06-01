@@ -1,0 +1,70 @@
+# 🎬 lv-runner
+
+LMS 강의 영상을 **1배속으로 끝까지 재생하고 완료 처리까지** 눌러주는 개인 학습 보조 러너. Playwright가 **사용자가 직접 로그인한 실제 브라우저**에 연결(CDP)해 동작합니다.
+
+```
+ npm run launch ──▶ 🌐 브라우저에서 직접 로그인 ──▶ npm run auto -- 13 ──▶ ✅ 자동 재생
+   (브라우저 켜기)        (사람이 직접 인증)            (주차 지정)          (1배속+완료처리)
+```
+
+---
+
+## 📦 설치 (최초 1회)
+
+**필요 프로그램**: Node.js 18+, Microsoft Edge(또는 Chrome). 없으면 아래로 설치 (Windows · 관리자 PowerShell):
+```powershell
+winget install OpenJS.NodeJS.LTS    # Node.js (이미 있으면 생략)
+winget install Microsoft.Edge        # Edge (보통 기본 설치돼 있음)
+```
+그다음 레포에서:
+```bash
+npm run setup    # 의존성 설치 + 브라우저 자동 점검/설치
+```
+> `npm run setup`이 `npm install`(Playwright 다운로드)과 브라우저 유무 확인까지 한 번에 처리합니다. 브라우저는 시스템 Edge에 연결하므로 별도 `playwright install`은 필요 없습니다.
+
+---
+
+## 🚀 사용법
+
+| 단계 | 명령 | 설명 |
+|---|---|---|
+| 1️⃣ 브라우저 | `npm run launch` | 뜬 창에서 **직접 로그인** → 대상 **과목 한 번 열기** |
+| 2️⃣ 현황 | `npm run report` | 진행률 + 주차별 완료 확인 |
+| 3️⃣ 실행 | `npm run auto -- 13` | 13주차 재생 |
+
+```bash
+npm run auto -- 13,12,11   # 여러 주차 (앞 순서부터)
+npm run auto -- all        # 전체 미완 주차
+```
+> 이미 완료한 항목은 건너뛰고, 중단돼도 이어서 재개합니다.
+
+---
+
+## 🤖 Codex / Claude Code 로 쓰기
+
+레포 폴더를 열고 이렇게 말하면 알아서 진행합니다:
+> "13주차 강의 재생 돌려줘"
+
+- **Codex**: 레포의 [`AGENTS.md`](./AGENTS.md)를 자동으로 읽고 실행합니다. (Codex엔 별도 "스킬" 개념이 없습니다.)
+- **Claude Code**: [`SKILL.md`](./SKILL.md)를 스킬로 인식합니다. (`.claude/skills/`에 두면 슬래시로 호출)
+
+(단, **로그인만은 직접** 해야 합니다.)
+
+---
+
+## ⚠️ 알아둘 것
+
+- 🕐 **1배속만** 완료 인정 (사이트가 실제 재생시간 기준) — 기본값 1배속
+- ⏰ **마감 임박 주차를 맨 앞 순서**에
+- 🖥️ 실행 중 **브라우저 닫지 말기**, PC **절전 끄기**
+- 📚 **본인 계정·본인 수강 항목만** 사용. 책임은 사용자.
+
+---
+
+## 🛠 요구사항
+
+- Node.js 18+ / Microsoft Edge(또는 Chrome)
+- ⚠️ 설치 경로에 **한글·공백·특수문자(#) 금지, OneDrive 동기화 폴더 금지** — Playwright 네이티브 모듈이 `access violation`으로 크래시합니다. **짧은 ASCII 경로**(예: `C:\lv-runner`)에 두세요.
+- 대상 사이트는 `config.json`에서 설정
+
+> 자세한 동작 원리는 [`AGENTS.md`](./AGENTS.md) 참고.
