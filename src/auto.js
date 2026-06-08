@@ -9,6 +9,8 @@ import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { closePopups } from './close-popups.mjs';
+import { emailAuth } from './email-auth.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const STATE_DIR = path.join(__dirname, '..', '.state');
@@ -119,18 +121,27 @@ async function clickAttend() {
   return false;
 }
 
+await closePopups(ctx, () => {}).catch(() => {}); // 시작 시 떠있는 공지 팝업 정리
 logEvent({ event: 'START', totalTargets: targets.length, skippedComplete, alreadyDone: doneSet.size, order: orderedWeeks, speed });
 
 for (const t of targets) {
   if (doneSet.has(t.item_id)) { console.log(`skip done: ${t.week}주 ${t.name}`); continue; }
   logEvent({ event: 'OPEN', week: t.week, name: t.name, item_id: t.item_id });
   await openPart(t);
+  await closePopups(ctx, () => {}).catch(() => {}); // 공지 팝업 자동 닫기
 
   if (await authVisible()) {
-    await page.screenshot({ path: path.join(STATE_DIR, 'auto-NEED-AUTH.png') }).catch(() => {});
-    logEvent({ event: 'NEED_AUTH', week: t.week, name: t.name });
-    console.log('\n*** 2차 본인인증이 필요합니다. 중단합니다. 인증 후 다시 실행하세요. ***');
-    break;
+    logEvent({ event: 'AUTH_DETECTED', week: t.week, name: t.name });
+    const authed = await emailAuth(ctx, (m) => console.log(m)).catch(() => false);
+    if (!authed) {
+      await page.screenshot({ path: path.join(STATE_DIR, 'auto-NEED-AUTH.png') }).catch(() => {});
+      logEvent({ event: 'NEED_AUTH', week: t.week, name: t.name });
+      console.log('\n*** 2차 인증 자동처리 실패. 수동 인증 후 재실행하세요. ***');
+      break;
+    }
+    logEvent({ event: 'AUTH_OK', week: t.week });
+    await openPart(t); // 인증 후 강의 다시 열기
+    await closePopups(ctx, () => {}).catch(() => {});
   }
   if (!videoFrame()) {
     logEvent({ event: 'NO_VIDEO', week: t.week, name: t.name });
