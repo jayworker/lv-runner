@@ -8,7 +8,11 @@
     "launch": "node src/launch.mjs",
     "enumerate": "node src/enumerate.js",
     "report": "node src/report.js",
-    "auto": "node src/auto.js"
+    "auto": "node src/auto.js",
+    "kmooc:list": "node src/kmooc-list.mjs",
+    "kmooc:auto": "node src/kmooc-auto.mjs",
+    "kmooc:quiz-start": "node src/kmooc-quiz-start.mjs",
+    "kmooc:quiz-submit": "node src/kmooc-quiz-submit.mjs"
   },
   "keywords": ["playwright", "automation", "cdp", "video"],
   "license": "MIT",

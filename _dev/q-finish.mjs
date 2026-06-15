@@ -1,0 +1,18 @@
+import { chromium } from 'playwright';
+const ATT=process.argv[2], CMID=process.argv[3];
+const b=await chromium.connectOverCDP('http://localhost:9222');const ctx=b.contexts()[0];
+let p=ctx.pages().find(x=>/lms\.kmooc\.kr/.test(x.url()))||ctx.pages()[0];
+p.on('dialog',async d=>{try{await d.accept();}catch{}});
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+await p.goto(`https://lms.kmooc.kr/mod/quiz/summary.php?attempt=${ATT}&cmid=${CMID}`,{waitUntil:'domcontentloaded'}).catch(()=>{});
+await sleep(1000);
+await p.evaluate(()=>{const f=document.querySelector('form[action*="processattempt"]');if(f)f.submit();});
+await sleep(3500);
+console.log('AFTER URL:',p.url());
+const res=await p.evaluate(()=>{const norm=s=>(s||'').replace(/\s+/g,' ').trim();
+ const grade=norm((document.querySelector('.quizreviewsummary, .grade, table.generaltable')||{}).innerText||'');
+ const fb=[...document.querySelectorAll('.que .grade, .que .state')].map(e=>norm(e.innerText));
+ return {grade:grade.slice(0,300), states:fb};});
+console.log('REVIEW:',JSON.stringify(res,null,1));
+await p.screenshot({path:`C:/computeruse/.state/quiz-review-${CMID}.png`,fullPage:true}).catch(()=>{});
+await b.close();process.exit(0);
